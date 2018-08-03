@@ -1,0 +1,174 @@
+{include file='adbase/header'/}
+  
+  <body>
+    <div class="x-body">
+        <form action="" method="post" class="layui-form layui-form-pane">
+                <div class="layui-form-item">
+                    <label for="role_name" class="layui-form-label">
+                        <span class="x-red">*</span>角色名
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="role_name" name="role_name" required="" lay-verify="required"
+                        autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">
+                        拥有权限
+                    </label>
+                    <table  class="layui-table layui-input-block">
+                        <tbody>
+                            
+                            <tr>
+                                 <td>
+                                    <span>网站设置</span>
+                                    <!-- <input type="checkbox" name="like1[write]" lay-skin="primary" title="网站设置"> -->
+                                </td>
+                                <td>
+                                    {volist name='power' id='vo'}
+                                    {eq name="vo.parent_id" value="1"}
+                                    <div class="layui-input-block">
+                                        <input name="power_id" lay-skin="primary" type="checkbox" title="{$vo.power_name}" value="{$vo.power_id}">  
+                                    </div>
+                                    {/eq}
+                                    {/volist}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                 <td>
+                                    <span>管理员管理</span>
+                                    <!-- <input type="checkbox" name="like1[write]" lay-skin="primary" title="管理员管理"> -->
+                                </td>
+                                <td>
+                                    {volist name='power' id='vo'}
+                                    {eq name="vo.parent_id" value="3"}
+                                    <div class="layui-input-block">
+                                        <input name="power_id" lay-skin="primary" type="checkbox" title="{$vo.power_name}" value="{$vo.power_id}">  
+                                    </div>
+                                    {/eq}
+                                    {/volist}
+                                </td>
+                            </tr>
+
+
+                           <!--  <tr>
+                                <td>
+                                    <input type="checkbox" name="like1[write]" lay-skin="primary" title="网站设置">
+                                </td>
+                                <td>
+                                    <div class="layui-input-block">
+                                        <input name="id[]" lay-skin="primary" type="checkbox" title="网站SEO" value="2"> 
+                                        <input name="id[]" lay-skin="primary" type="checkbox" value="2" title="SEO编辑"> 
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                   
+                                    <input name="id[]" lay-skin="primary" type="checkbox" value="2" title="文章管理">
+                                </td>
+                                <td>
+                                    <div class="layui-input-block">
+                                        <input name="id[]" lay-skin="primary" type="checkbox" value="2" title="文章添加"> 
+                                        <input name="id[]" lay-skin="primary" type="checkbox" value="2" title="文章删除"> 
+                                        <input name="id[]" lay-skin="primary" type="checkbox" value="2" title="文章修改"> 
+                                        <input name="id[]" lay-skin="primary" type="checkbox" value="2" title="文章改密"> 
+                                        <input name="id[]" lay-skin="primary" type="checkbox" value="2" title="文章列表"> 
+                                    </div>
+                                </td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label for="role_text" class="layui-form-label">
+                        描述
+                    </label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" id="role_text" name="role_text" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                <button class="layui-btn" lay-submit="" lay-filter="add">增加</button>
+              </div>
+            </form>
+    </div>
+    <script>
+        layui.use(['form','layer'], function(){
+            $ = layui.jquery;
+          var form = layui.form
+          ,layer = layui.layer;
+        
+          //自定义验证规则
+          form.verify({
+            nikename: function(value){
+              if(value.length < 5){
+                return '昵称至少得5个字符啊';
+              }
+            }
+            ,pass: [/(.+){6,12}$/, '密码必须6到12位']
+            ,repass: function(value){
+                if($('#L_pass').val()!=$('#L_repass').val()){
+                    return '两次密码不一致';
+                }
+            }
+          });
+
+          //监听提交
+          form.on('submit(add)', function(data){
+            console.log(data);
+            // console.log($('input[type=checkbox]:checked').val());
+            //发异步，把数据提交给php
+            // 一下获取复选框的操作比较重要
+            
+            // 获取复选框所有的值，1，首先合成数组，然后数组合成字符串
+            var checkarry = []
+
+            $("input[type='checkbox']:checked").each(function(){  
+                checkarry.push($(this).val());//向数组中添加元素  
+            });  
+            var idstr=checkarry.join(',');//将数组元素连接起来以构建一个字符串  
+            // alert(idstr);  
+
+            $.post(
+                url = "{:url('doadd')}", 
+                data = {
+                    'role_name' : $.trim($('#role_name').val()),
+                    'power_id'  : idstr,
+                    'role_text' : $.trim($('#role_text').val())
+                }, 
+                function(res){
+                    // 后端返回json解析
+                    var jres = JSON.parse(res)
+
+                    if (jres.code == 1) {
+                        layer.alert(jres.msg, {icon: 5})
+                    }else{
+                         layer.alert(jres.msg, {icon: 6},function () {
+                        // 获得frame索引
+                         var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                         parent.layer.close(index);
+            });
+                    }
+                }
+                )
+
+
+            // layer.alert("增加成功", {icon: 6},function () {
+            //     // 获得frame索引
+            //     var index = parent.layer.getFrameIndex(window.name);
+            //     //关闭当前frame
+            //     parent.layer.close(index);
+            // });
+            return false;
+          });
+          
+          
+        });
+    </script>
+    
+  </body>
+
+</html>

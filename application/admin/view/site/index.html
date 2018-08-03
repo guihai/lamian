@@ -1,0 +1,59 @@
+{include file='adbase/header'/}
+ <body>
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">网站SEO设置</a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body">
+      <blockquote class="layui-elem-quote">网站SEO数据只有一个，只能编辑，不能新增和删除</blockquote>
+      <table class="layui-table layui-form">
+        <thead>
+          <tr>
+            
+            <th width="20">ID</th>
+            <th width="100">网站标题</th>
+            <th width="200">关键词</th>
+            <th width="200">描述</th>
+            <th width="50">操作</th>
+        </thead>
+        <tbody class="x-cate">
+          <tr cate-id='1' fid='0' >
+            
+            <td>1</td>
+            <td>
+            	{$site.site_name}
+            </td>
+            <td>
+            	{$site.keywords}
+            </td>
+            <td>
+              {$site.desc}
+            </td>
+            <td class="td-manage">
+              <button class="layui-btn layui-btn layui-btn-xs"  onclick="x_admin_show('编辑','{:url(\"edit\")}')" ><i class="layui-icon">&#xe642;</i>编辑</button>
+              
+            </td>
+          </tr>
+          
+          
+        </tbody>
+      </table>
+    </div>
+    <style type="text/css">
+      
+    </style>
+    <script>
+      layui.use(['form'], function(){
+        form = layui.form;
+        
+      });
+
+      
+    </script>
+    
+  </body>
+
+</html>

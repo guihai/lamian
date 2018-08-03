@@ -1,0 +1,312 @@
+{include file="base/header"/}
+{include file="base/top"/}
+<div class="fly-panel fly-column">
+  <div class="layui-container">
+    <ul class="layui-clear">
+      <li class="layui-hide-xs layui-this"><a href="{:url('index/index')}">首页</a></li> 
+      <li><a href="{:url('cateart/index',['cateid'=>$cateecho.cate_id])}">本组：{$cateecho.cate_name}</a></li> 
+      <!-- <li><a href="jie/index.html">提问</a></li> 
+      <li><a href="jie/index.html">分享<span class="layui-badge-dot"></span></a></li> 
+      <li><a href="jie/index.html">讨论</a></li> 
+      <li><a href="jie/index.html">建议</a></li> 
+      <li><a href="jie/index.html">公告</a></li> 
+      <li><a href="jie/index.html">动态</a></li>  -->
+      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li> 
+      
+      <!-- 用户登入后显示 -->
+      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="user/index.html">我发表的贴</a></li> 
+      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="user/index.html#collection">我收藏的贴</a></li> 
+    </ul> 
+    
+    <div class="fly-column-right layui-hide-xs"> 
+      <span class="fly-search"><i class="layui-icon"></i></span> 
+      <a href="{:url('cateart/add',['cate_id'=>$cateecho.cate_id])}" target="_blank" class="layui-btn">发表新帖</a> 
+    </div> 
+    <div class="layui-hide-sm layui-show-xs-block" style="margin-top: -10px; padding-bottom: 10px; text-align: center;"> 
+      <a href="jie/add.html" class="layui-btn">发表新帖</a> 
+    </div> 
+  </div>
+</div>
+
+
+<div class="layui-container">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md8 content detail">
+      <div class="fly-panel detail-box">
+        <h1>{$article.art_title}</h1>
+        <div class="fly-detail-info">
+          
+          
+         <!--  <div class="fly-admin-box" data-id="123">
+            <span class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
+            
+            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1">置顶</span>  -->
+            <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="0" style="background-color:#ccc;">取消置顶</span> -->
+            
+            <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="1">加精</span>  -->
+            <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="0" style="background-color:#ccc;">取消加精</span> -->
+          <!-- </div> -->
+          <span class="fly-list-nums"> 
+            <a href="#comment"><i class="iconfont" title="回答">&#xe60c;</i> 66</a>
+            <i class="iconfont" title="人气">&#xe60b;</i> 99999
+          </span>
+        </div>
+        <div class="detail-about">
+          <a class="fly-avatar" href="../user/home.html">
+            <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" alt="贤心">
+          </a>
+          <div class="fly-detail-user">
+            <a href="../user/home.html" class="fly-link">
+              <cite>{$article.user_id | getArtUse}</cite>
+              
+            </a>
+            <span>{$article.create_time}</span>
+          </div>
+          {eq name="$Think.session.user_id"  value="$article.user_id"}
+          <div class="detail-hits" id="LAY_jieAdmin" data-id="123">
+            <span class="layui-btn layui-btn-xs jie-admin" type="edit"><a href="add.html">编辑此贴</a></span>
+          </div>
+          {/eq}
+        </div>
+        <div class="detail-body photos">
+         {:htmlspecialchars_decode($article.art_content)}
+        </div>
+      </div>
+
+      <div class="fly-panel detail-box" id="flyReply">
+        <fieldset class="layui-elem-field layui-field-title" style="text-align: center;">
+          <legend>回帖</legend>
+        </fieldset>
+
+        <ul class="jieda" id="jieda">
+         
+         <!-- 回帖循环 -->
+         {volist name="article_reply" id="artrep"}
+         <li data-id="111">
+            <a name="item-1111111111"></a>
+            <div class="detail-about detail-about-reply">
+              <a class="fly-avatar" href="">
+                <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" alt=" ">
+              </a>
+              <div class="fly-detail-user">
+                <a href="" class="fly-link">
+                  <cite>{$artrep.user_id | getArtUse}</cite>       
+                </a>
+              </div>
+              <div class="detail-hits">
+                <span>{$artrep.update_time}</span>
+              </div>
+            </div>
+            <div class="detail-body jieda-body photos">
+              <p>{:htmlspecialchars_decode($artrep.art_content)}</p>
+            </div>
+            <div class="jieda-reply">
+              <span class="jieda-zan" type="zan">
+                <i class="iconfont icon-zan"></i>
+                <em>0</em>
+              </span>
+              <!-- <span type="reply">
+                <i class="iconfont icon-svgmoban53"></i>
+                回复
+              </span> -->
+              <!-- 如果sessionid== userid 打开编辑回复 -->
+              {eq name="$Think.session.user_id"  value="$artrep.user_id"}
+              <div class="jieda-admin">
+                <span type="edit">编辑</span>
+                <span type="del">删除</span>
+                <!-- <span class="jieda-accept" type="accept">采纳</span> -->
+              </div>
+              {/eq}
+              
+            </div>
+          </li>
+
+
+         {/volist}
+          
+          
+          
+          <!-- 无数据时 -->
+          <!-- <li class="fly-none">消灭零回复</li> -->
+        </ul>
+        
+        <div class="layui-form layui-form-pane">
+          <form action="/jie/reply/" method="post">
+            <div class="layui-form-item layui-form-text">
+              <a name="comment"></a>
+              <div class="layui-input-block">
+                <div  class="layui-input-block" id="editor"></div>
+                <!-- 文章分类信息保存 -->
+                  <div><input type="hidden" id="cate_id" name="cate_id" value="{$cateecho.cate_id}"></div>
+              <!-- 会员数据保存 -->
+                
+                  <div><input type="hidden" id="user_id" name="user_id" value="{$Think.session.user_id}"></div>
+                  <!-- 主帖id保存，用来生成回帖的pid -->
+                  <div><input type="hidden" id="art_id" name="art_id" value="{$article.art_id}"></div>
+
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <input type="hidden" name="jid" value="123">
+              <button class="layui-btn" lay-filter="artrepadd" lay-submit>提交回复</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md4">
+      <dl class="fly-panel fly-list-one">
+        <dt class="fly-panel-title">本周热议</dt>
+        <dd>
+          <a href="">基于 layui 的极简社区页面模版</a>
+          <span><i class="iconfont icon-pinglun1"></i> 16</span>
+        </dd>
+        <dd>
+          <a href="">基于 layui 的极简社区页面模版</a>
+          <span><i class="iconfont icon-pinglun1"></i> 16</span>
+        </dd>
+        <dd>
+          <a href="">基于 layui 的极简社区页面模版</a>
+          <span><i class="iconfont icon-pinglun1"></i> 16</span>
+        </dd>
+        <dd>
+          <a href="">基于 layui 的极简社区页面模版</a>
+          <span><i class="iconfont icon-pinglun1"></i> 16</span>
+        </dd>
+        <dd>
+          <a href="">基于 layui 的极简社区页面模版</a>
+          <span><i class="iconfont icon-pinglun1"></i> 16</span>
+        </dd>
+        <dd>
+          <a href="">基于 layui 的极简社区页面模版</a>
+          <span><i class="iconfont icon-pinglun1"></i> 16</span>
+        </dd>
+        <dd>
+          <a href="">基于 layui 的极简社区页面模版</a>
+          <span><i class="iconfont icon-pinglun1"></i> 16</span>
+        </dd>
+        <dd>
+          <a href="">基于 layui 的极简社区页面模版</a>
+          <span><i class="iconfont icon-pinglun1"></i> 16</span>
+        </dd>
+        <dd>
+          <a href="">基于 layui 的极简社区页面模版</a>
+          <span><i class="iconfont icon-pinglun1"></i> 16</span>
+        </dd>
+        <dd>
+          <a href="">基于 layui 的极简社区页面模版</a>
+          <span><i class="iconfont icon-pinglun1"></i> 16</span>
+        </dd>
+
+        <!-- 无数据时 -->
+        <!--
+        <div class="fly-none">没有相关数据</div>
+        -->
+      </dl>
+
+      <div class="fly-panel">
+        <div class="fly-panel-title">
+          这里可作为广告区域
+        </div>
+        <div class="fly-panel-main">
+          <a href="http://layim.layui.com/?from=fly" target="_blank" class="fly-zanzhu" time-limit="2017.09.25-2099.01.01" style="background-color: #5FB878;">LayIM 3.0 - layui 旗舰之作</a>
+        </div>
+      </div>
+
+      <div class="fly-panel" style="padding: 20px 0; text-align: center;">
+        <img src="/static/index/images/weixin.jpg" style="max-width: 100%;" alt="layui">
+        <p style="position: relative; color: #666;">微信扫码关注 layui 公众号</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 引入wangedit编辑器 -->
+<script type="text/javascript" src="/static/plugin/wangedit/wangEditor.min.js"></script>
+
+    <!-- 这是编辑器的监听提交 -->
+     <script>
+        layui.use(['form','layer'], function(){
+            $ = layui.jquery;
+          var form = layui.form
+          ,layer = layui.layer;
+          // alert(88)
+
+
+          //以下是编辑器的操作
+
+        var E = window.wangEditor
+
+        var editor = new E('#editor')
+        // 或者 var editor = new E( document.getElementById('editor') )
+
+        // 配置图片服务器端地址
+        editor.customConfig.uploadImgServer = "{:url('Cateart/imgupload')}"
+
+        // 配置上传图片的文件类型
+        editor.customConfig.uploadFileName = 'img'
+
+
+        editor.create()
+
+        // 编辑器创建完成
+
+        
+
+          //监听提交
+          form.on('submit(artrepadd)', function(data){
+            console.log(data);
+            //发异步，把数据提交给php
+ 
+            $.post(
+              url = "{:url('Cateart/artrepadd')}", 
+              data = {
+                'user_id'   : $('#user_id').val(),//会员信息
+                'cate_id'   : $('#cate_id').val(),//分类信息
+                'part_id'    : $('#art_id').val(),//主帖id信息
+                //必须要用editor对象的方法来获取编辑器中的内容
+                'art_content' : editor.txt.html()//内容信息，
+
+              }, 
+              function(res){
+
+                // 接收后端数据，先解析
+                var jres = JSON.parse(res)
+
+                console.log(jres)
+
+                // 保存失败
+                if (jres.code == 2) {
+                  layer.msg(jres.msg, {icon: 5});
+
+                }else{
+                  // 保存成功，跳转到帖子页
+                  // alert(jres.msg)
+                  layer.msg(jres.msg, {icon: 6},function () {
+                    location.href= window.location.href;
+                    // window.location.href=window.location.href;和window.location.Reload()和都是刷新当前页面。区别在于是否有提交数据。当有提交数据时，window.location.Reload()会提示是否提交，window.location.href=window.location.href;则是向指定的url提交数据。
+                    
+                  });
+
+                
+                  
+
+
+                }
+
+              }
+              )
+
+
+            return false;
+          });
+          
+          
+        });
+    </script>
+
+
+<!-- 以下就是底部了 -->
+{include file="base/footer"/}

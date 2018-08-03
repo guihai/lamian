@@ -1,0 +1,144 @@
+{include file="base/header"/}
+{include file="base/top"/}
+
+<div class="layui-container fly-marginTop">
+  <div class="fly-panel" pad20 style="padding-top: 5px;">
+    <!--<div class="fly-none">没有权限</div>-->
+    <div class="layui-form layui-form-pane">
+      <div class="layui-tab layui-tab-brief" lay-filter="user">
+        <ul class="layui-tab-title">
+          <li class="layui-this">发表新帖<!-- 编辑帖子 --></li>
+        </ul>
+        <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+          <div class="layui-tab-item layui-show">
+            <form action="" method="post">
+              <div class="layui-row layui-col-space15 layui-form-item">
+                <div class="layui-col-md3">
+                  <label class="layui-form-label">所在专栏</label>
+                  <label class="layui-form-label">{$cateadd.cate_name}</label>                 
+                </div>
+                
+              
+
+                <div class="layui-col-md9">
+                  <label for="L_title" class="layui-form-label">标题</label>
+                  <div class="layui-input-block">
+                    <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input">
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- 文章分类信息保存 -->
+                  <div><input type="hidden" id="cate_id" name="cate_id" value="{$cateadd.cate_id}"></div>
+              <!-- 会员数据保存 -->
+                
+                  <div><input type="hidden" id="user_id" name="user_id" value="{$Think.session.user_id}"></div>
+
+
+                <div class="layui-form-item layui-form-text">
+                <div class="layui-input-block">
+                  <div  class="layui-input-block" id="editor"></div>
+                </div>
+              </div>
+
+                
+
+              <div class="layui-form-item">
+                <button class="layui-btn" lay-filter="artadd" lay-submit>立即发布</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 引入wangedit编辑器 -->
+<script type="text/javascript" src="/static/plugin/wangedit/wangEditor.min.js"></script>
+
+    <!-- 这是编辑器的监听提交 -->
+     <script>
+        layui.use(['form','layer'], function(){
+            $ = layui.jquery;
+          var form = layui.form
+          ,layer = layui.layer;
+          // alert(88)
+
+
+          //以下是编辑器的操作
+
+        var E = window.wangEditor
+
+        var editor = new E('#editor')
+        // 或者 var editor = new E( document.getElementById('editor') )
+
+        // 配置图片服务器端地址
+        editor.customConfig.uploadImgServer = "{:url('Cateart/imgupload')}"
+
+        // 配置上传图片的文件类型
+        editor.customConfig.uploadFileName = 'img'
+
+
+        editor.create()
+
+        // 编辑器创建完成
+
+        
+
+          //监听提交
+          form.on('submit(artadd)', function(data){
+            console.log(data);
+            //发异步，把数据提交给php
+ 
+            $.post(
+              url = "{:url('Cateart/artadd')}", 
+              data = {
+                'user_id'     : $('#user_id').val(),//会员信息
+                'cate_id'   : $('#cate_id').val(),//分类信息
+                'art_title'   : $.trim($('#L_title').val()),//标题信息
+                //必须要用editor对象的方法来获取编辑器中的内容
+                'art_content' : editor.txt.html()//内容信息，
+
+              }, 
+              function(res){
+
+                // 接收后端数据，先解析
+                var jres = JSON.parse(res)
+
+                console.log(jres)
+
+                // 保存失败
+                if (jres.code == 2) {
+                  layer.msg(jres.msg, {icon: 5});
+
+                }else{
+                  // 保存成功，跳转到帖子页
+                  // alert(jres.msg)
+
+                
+                  layer.msg(jres.msg, {icon: 6},function () {
+                    location.href= "{:url('Cateart/index',['cateid'=>$cateadd.cate_id])}"
+                    
+                  });
+
+
+                }
+
+              }
+              )
+
+
+            return false;
+          });
+          
+          
+        });
+    </script>
+
+
+
+<!-- 以下就是底部了 -->
+
+{include file="base/footer"/}
